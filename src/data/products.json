@@ -1,112 +1,31 @@
 [
   {
     "id": 1,
-    "title": "Zapatillas Urbanas",
-    "description": "Zapatillas deportivas color blanco",
-    "code": "ZAP123",
-    "price": 15000,
+    "title": "Mouse Logitech",
+    "description": "Inalámbrico",
+    "code": "M185",
+    "price": 4500,
     "status": true,
-    "stock": 20,
-    "category": "calzado",
-    "thumbnails": ["img/zapatillas1.jpg"]
+    "stock": 10,
+    "category": "Accesorios",
+    "thumbnails": []
   },
   {
     "id": 2,
-    "title": "Campera de invierno",
-    "description": "Campera impermeable con capucha",
-    "code": "CMP456",
-    "price": 28000,
-    "status": true,
-    "stock": 10,
-    "category": "ropa",
-    "thumbnails": ["img/campera.jpg"]
+    "title": "Azucar",
+    "description": "Producto",
+    "price": "1500",
+    "stock": "3",
+    "category": "harinas",
+    "code": "156"
   },
   {
     "id": 3,
-    "title": "Mochila escolar",
-    "description": "Mochila grande con varios bolsillos",
-    "code": "MCH789",
-    "price": 12000,
-    "status": true,
-    "stock": 15,
-    "category": "accesorios",
-    "thumbnails": ["img/mochila.jpg"]
-  },
-  {
-    "id": 4,
-    "title": "Gorra negra",
-    "description": "Gorra de algodón ajustable",
-    "code": "GOR321",
-    "price": 3500,
-    "status": true,
-    "stock": 30,
-    "category": "accesorios",
-    "thumbnails": ["img/gorra.jpg"]
-  },
-  {
-    "id": 5,
-    "title": "Jean azul",
-    "description": "Pantalón de jean clásico azul oscuro",
-    "code": "JEA654",
-    "price": 18000,
-    "status": true,
-    "stock": 12,
-    "category": "ropa",
-    "thumbnails": ["img/jean.jpg"]
-  },
-  {
-    "id": 6,
-    "title": "Camisa a cuadros",
-    "description": "Camisa manga larga estilo leñador",
-    "code": "CAM987",
-    "price": 13000,
-    "status": true,
-    "stock": 8,
-    "category": "ropa",
-    "thumbnails": ["img/camisa.jpg"]
-  },
-  {
-    "id": 7,
-    "title": "Lentes de sol",
-    "description": "Lentes polarizados con protección UV",
-    "code": "LEN111",
-    "price": 9000,
-    "status": true,
-    "stock": 25,
-    "category": "accesorios",
-    "thumbnails": ["img/lentes.jpg"]
-  },
-  {
-    "id": 8,
-    "title": "Remera estampada",
-    "description": "Remera de algodón con diseño gráfico",
-    "code": "REM222",
-    "price": 7000,
-    "status": true,
-    "stock": 18,
-    "category": "ropa",
-    "thumbnails": ["img/remera.jpg"]
-  },
-  {
-    "id": 9,
-    "title": "Reloj deportivo",
-    "description": "Reloj resistente al agua con cronómetro",
-    "code": "REL333",
-    "price": 21000,
-    "status": true,
-    "stock": 6,
-    "category": "accesorios",
-    "thumbnails": ["img/reloj.jpg"]
-  },
-  {
-    "id": 10,
-    "title": "Botines de fútbol",
-    "description": "Botines con suela de goma para césped sintético",
-    "code": "BOT444",
-    "price": 26000,
-    "status": true,
-    "stock": 10,
-    "category": "calzado",
-    "thumbnails": ["img/botines.jpg"]
+    "title": "Leche",
+    "description": "Producto lacteo",
+    "price": "2000",
+    "stock": "10",
+    "category": "Lacteos",
+    "code": "456"
   }
 ]

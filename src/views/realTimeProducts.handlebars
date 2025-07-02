@@ -1,0 +1,123 @@
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    margin: 20px;
+  }
+
+  h1 {
+    color: #333;
+    margin-bottom: 20px;
+  }
+
+  form {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+
+  input[type="text"],
+  input[type="number"] {
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    flex: 1 1 150px;
+  }
+
+  button {
+    padding: 8px 15px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    flex: 0 0 auto;
+  }
+
+  button:hover {
+    background-color: #0056b3;
+  }
+
+  ul {
+    list-style: none;
+    padding-left: 0;
+  }
+
+  li {
+    background-color: #f9f9f9;
+    margin-bottom: 8px;
+    padding: 10px;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  li strong {
+    color: #222;
+  }
+
+  li button {
+    background-color: #dc3545;
+    padding: 5px 10px;
+    font-size: 0.9rem;
+  }
+
+  li button:hover {
+    background-color: #a71d2a;
+  }
+</style>
+
+
+
+<h1>Productos en tiempo real</h1>
+
+<form id="addProductForm">
+  <input name="title" placeholder="Título" required />
+  <input name="description" placeholder="Descripción" required />
+  <input name="price" type="number" placeholder="Precio" required />
+  <input name="stock" type="number" placeholder="Stock" required />
+  <input name="category" placeholder="Categoría" required />
+  <input name="code" placeholder="Código" required />
+  <button type="submit">Agregar producto</button>
+</form>
+
+<ul id="productList">
+  {{#each products}}
+    <li data-id="{{id}}">
+      <strong>{{title}}</strong> - ${{price}} (Stock: {{stock}})
+      <button onclick="deleteProduct('{{id}}')">Eliminar</button>
+    </li>
+  {{/each}}
+</ul>
+
+<script src="/socket.io/socket.io.js"></script>
+<script>
+  const socket = io();
+
+  const form = document.getElementById('addProductForm');
+  const list = document.getElementById('productList');
+
+  form.addEventListener('submit', e => {
+    e.preventDefault();
+    const data = Object.fromEntries(new FormData(form));
+    socket.emit('newProduct', data);
+    form.reset();
+  });
+
+  function deleteProduct(id) {
+    socket.emit('deleteProduct', id);
+  }
+
+  socket.on('updateProducts', products => {
+    list.innerHTML = '';
+    products.forEach(p => {
+      list.innerHTML += `
+        <li data-id="${p.id}">
+          <strong>${p.title}</strong> - $${p.price} (Stock: ${p.stock})
+          <button onclick="deleteProduct('${p.id}')">Eliminar</button>
+        </li>
+      `;
+    });
+  });
+</script>

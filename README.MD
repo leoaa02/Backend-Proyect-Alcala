@@ -1,6 +1,17 @@
-# 🛒 Backend - Entrega Nº1 | Coderhouse
+# Entrega 2: Websockets + Handlebars
 
-Este proyecto es un servidor desarrollado con **Node.js** y **Express**, que simula una **API RESTful** para la gestión de productos y carritos de compra.
+## 💻 Descripción
 
+Proyecto backend que implementa un servidor con Express y Handlebars, usando WebSockets para actualizar productos en tiempo real desde una vista dinámica.
+
+---
+
+## 🚀 Cómo ejecutar
+
+1. Clonar el repositorio y abrir la terminal.
+2. Instalar dependencias:
+
+```bash
+npm install
 
 
