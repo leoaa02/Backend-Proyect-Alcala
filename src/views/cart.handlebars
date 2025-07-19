@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tu Carrito</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <h1>Tu Carrito</h1>
+
+    {{#if cart.products.length}}
+    <ul>
+        {{#each cart.products}}
+        <li>
+            <h2>{{this.product.title}}</h2>
+
+            <p>Precio: {{formatPrice this.product.price}}</p>
+
+            <p>
+                Cantidad:
+                <input 
+                    type="number" 
+                    class="quantity-input"
+                    value="{{this.quantity}}" 
+                    min="1"
+                    data-product-id="{{this.product._id}}" 
+                    data-cart-id="{{../cart._id}}"
+                />
+            </p>
+
+            <p>Subtotal: {{formatPrice (multiply this.product.price this.quantity)}}</p>
+
+            <button 
+                class="remove-btn" 
+                data-product-id="{{this.product._id}}" 
+                data-cart-id="{{../cart._id}}"
+            >
+                Eliminar Producto
+            </button>
+        </li>
+        {{/each}}
+    </ul>
+
+    <p>Total: {{formatPrice (calcTotal cart.products)}}</p>
+
+    {{else}}
+    <p>Tu carrito está vacío.</p>
+    {{/if}}
+
+    <a href="/">Seguir comprando</a>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+    <script>
+      const socket = io();
+
+      document.querySelectorAll('.quantity-input').forEach(input => {
+        input.addEventListener('change', () => {
+          const cartId = input.dataset.cartId;
+          const productId = input.dataset.productId;
+          const quantity = parseInt(input.value);
+          socket.emit('updateProductQuantity', { cartId, productId, quantity });
+        });
+      });
+
+      document.querySelectorAll('.remove-btn').forEach(button => {
+        button.addEventListener('click', () => {
+          const cartId = button.dataset.cartId;
+          const productId = button.dataset.productId;
+          socket.emit('removeProductFromCart', { cartId, productId });
+        });
+      });
+
+      socket.on('cartUpdated', () => {
+        Toastify({
+          text: "Carrito actualizado ✅",
+          duration: 2000,
+          backgroundColor: "green"
+        }).showToast();
+        setTimeout(() => location.reload(), 1000);
+      });
+
+      socket.on('errorCart', (errorMessage) => {
+        Toastify({
+          text: errorMessage,
+          duration: 3000,
+          backgroundColor: "red"
+        }).showToast();
+      });
+    </script>
+</body>
+</html>

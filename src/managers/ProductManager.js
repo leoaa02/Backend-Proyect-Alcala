@@ -1,62 +1,70 @@
-import fs from 'fs/promises';
-import { existsSync } from 'fs';
+import mongoose from "mongoose";
+import { Product } from "../models/product.model.js";
 
-export default class ProductManager {
-    constructor(path) {
-    this.path = path;
+class ProductManager {
+    async getProducts(filter = {}, sort = {}) {
+    return await Product.find(filter).sort(sort).lean();
     }
 
-    async #readFile() {
-    try {
-        if (!existsSync(this.path)) {
-        await fs.writeFile(this.path, '[]');
-    }
-    console.log('🔍 Leyendo:', this.path);          // <— NUEVO
-    const data = await fs.readFile(this.path, 'utf-8');
-    return JSON.parse(data);
-    } catch (err) {
-    console.error('❌ Error en #readFile:', err);   // <— NUEVO
-    throw err;                                     // hace que router devuelva 500
-    }
-}
+    async getProductsPaginated(page = 1, limit = 5, filter = {}, sortOption = {}) {
+    const skip = (page - 1) * limit;
+    //Contar documentos con filtros aplicados
+    const totalProducts = await Product.countDocuments(filter);
+    const totalPages = Math.ceil(totalProducts / limit);
 
-    async #saveFile(data) {
-    await fs.writeFile(this.path, JSON.stringify(data, null, 2));
-    }
+    const products = await Product.find(filter)
+        .sort(sortOption)
+        .skip(skip)
+        .limit(limit)
+        .lean();
 
-    async getProducts() {
-    return await this.#readFile();
-    }
+        return {
+        docs: products,
+        totalPages,
+        page,
+        hasPrevPage: page > 1,
+        hasNextPage: page < totalPages,
+        prevPage: page > 1 ? page - 1 : null,
+        nextPage: page < totalPages ? page + 1 : null,
+        };
+        }
 
-    async getProductById(id) {
-    const products = await this.#readFile();
-    return products.find(p => p.id === Number(id));
+    async getProductById(pid) {
+        if (!mongoose.Types.ObjectId.isValid(pid)) {
+        throw new Error("ID de producto no válido");
+    }
+    const product = await Product.findById(pid).lean();
+    if (!product) {
+        throw new Error("Producto no encontrado");
+    }
+    return product;
     }
 
     async addProduct(productData) {
-    const products = await this.#readFile();
-    const id = products.length ? products.at(-1).id + 1 : 1;
-    const newProduct = { id, ...productData };
-    products.push(newProduct);
-    await this.#saveFile(products);
-    return newProduct;
+    return await Product.create(productData);
     }
 
-    async updateProduct(id, updates) {
-    const products = await this.#readFile();
-    const index = products.findIndex(p => p.id === Number(id));
-    if (index === -1) return null;
-
-    products[index] = { ...products[index], ...updates, id: products[index].id };
-    await this.#saveFile(products);
-    return products[index];
+    async updateProduct(pid, updateData) {
+    if (!mongoose.Types.ObjectId.isValid(pid)) {
+        throw new Error("ID de producto no válido");
+    }
+    const updated = await Product.findByIdAndUpdate(pid, updateData, { new: true });
+    if (!updated) {
+    throw new Error("Producto no encontrado");
+    }
+    return updated;
     }
 
-    async deleteProduct(id) {
-    const products = await this.#readFile();
-    const filtered = products.filter(p => p.id !== Number(id));
-    if (filtered.length === products.length) return false; // no se borró nada
-    await this.#saveFile(filtered);
-    return true;
+    async deleteProduct(pid) {
+        if (!mongoose.Types.ObjectId.isValid(pid)) {
+        throw new Error("ID de producto no válido");
+    }
+    const deleted = await Product.findByIdAndDelete(pid);
+    if (!deleted) {
+    throw new Error("Producto no encontrado");
+    }
+    return deleted;
     }
 }
+
+export default ProductManager;

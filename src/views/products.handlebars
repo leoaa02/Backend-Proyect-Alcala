@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{title}}</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+
+<h1>{{title}}</h1>
+
+<ul>
+  {{#each products}}
+  <li>
+    <strong><a href="/products/{{this._id}}">{{this.title}}</a></strong> — ${{this.price}}  
+    <br>
+    Categoría: {{this.category}}  
+    <br>
+    Stock: {{this.stock}}  
+
+    <button 
+      class="add-to-cart-btn" 
+      data-product-id="{{this._id}}" 
+      data-cart-id="{{../cartId}}">
+      Agregar al carrito
+    </button>
+  </li>
+  {{/each}}
+</ul>
+
+<!-- Paginación -->
+<div>
+  {{#if hasPrevPage}}
+  <a href="?page={{prevPage}}">⬅ Anterior</a>
+  {{/if}}
+
+  <span>Página {{page}} de {{totalPages}}</span>
+
+  {{#if hasNextPage}}
+  <a href="?page={{nextPage}}">Siguiente ➡</a>
+  {{/if}}
+</div>
+
+<!-- Toastify -->
+<script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+<script>
+document.querySelectorAll(".add-to-cart-btn").forEach(btn => {
+  btn.addEventListener("click", async () => {
+    const productId = btn.dataset.productId;
+    const cartId = btn.dataset.cartId;
+
+    try {
+      const res = await fetch(`/api/carts/${cartId}/products/${productId}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ quantity: 1 })
+      });
+
+      if (res.ok) {
+        Toastify({
+          text: "Producto agregado al carrito ✅",
+          duration: 3000,
+          backgroundColor: "green"
+        }).showToast();
+      } else {
+        Toastify({
+          text: "Error al agregar ❌",
+          duration: 3000,
+          backgroundColor: "red"
+        }).showToast();
+      }
+    } catch {
+      Toastify({
+        text: "Error de conexión",
+        duration: 3000,
+        backgroundColor: "orange"
+      }).showToast();
+    }
+  });
+});
+</script>
+
+</body>
+</html>

@@ -1,10 +1,95 @@
-<h1>Lista de Productos</h1>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{{title}}</title>
+    <link rel="stylesheet" href="/css/style.css" />
+    <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+</head>
+<body>
+    <h1>{{title}}</h1>
+
+    <div style="text-align: right; margin-bottom: 10px;">
+        <a href="/cart/{{cartId}}" 
+        style="padding: 8px 12px; background: blue; color: white; text-decoration: none; border-radius: 5px;">
+        Ver carrito 🛒
+        </a>
+    </div>
 
     <ul>
-    {{#each products}}
+        {{#each products}}
         <li>
-        <strong>{{title}}</strong> - ${{price}} <br />
-        {{description}} (Stock: {{stock}})
-    </li>
-    {{/each}}
-</ul>
+            <div>
+                <strong>{{this.title}}</strong> — <span>{{formatPrice this.price}}</span>
+                <p>Categoría: {{this.category}}</p>
+                <p>Stock: {{this.stock}}</p>
+            </div>
+
+            <div>
+                <input
+                    type="number"
+                    value="1"
+                    min="1"
+                    max="{{this.stock}}"
+                    id="quantity-{{this._id}}"
+                />
+                <button onclick="addToCart('{{../cartId}}', '{{this._id}}')">
+                    Agregar al carrito
+                </button>
+            </div>
+        </li>
+        {{/each}}
+    </ul>
+
+    <div>
+        {{#if hasPrevPage}}
+        <a href="?page={{prevPage}}">← Anterior</a>
+        {{/if}}
+
+        <span>Página {{page}} de {{totalPages}}</span>
+
+        {{#if hasNextPage}}
+        <a href="?page={{nextPage}}">Siguiente →</a>
+        {{/if}}
+    </div>
+
+    <script>
+        async function addToCart(cartId, productId) {
+            const quantityInput = document.getElementById(`quantity-${productId}`);
+            let quantity = Number(quantityInput.value) || 1;
+
+            const maxStock = Number(quantityInput.max);
+            if (quantity > maxStock) quantity = maxStock;
+
+            try {
+                const res = await fetch(`/api/carts/${cartId}/products/${productId}`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ quantity }),
+                });
+
+                if (res.ok) {
+                    Toastify({
+                        text: "Producto agregado al carrito ✅",
+                        duration: 3000,
+                        backgroundColor: "green",
+                    }).showToast();
+                } else {
+                    Toastify({
+                        text: "Error al agregar el producto ❌",
+                        duration: 3000,
+                        backgroundColor: "red",
+                    }).showToast();
+                }
+            } catch (e) {
+                Toastify({
+                    text: "Error de conexión ⚠️",
+                    duration: 3000,
+                    backgroundColor: "orange",
+                }).showToast();
+            }
+        }
+    </script>
+</body>
+</html>
